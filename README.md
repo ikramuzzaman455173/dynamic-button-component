@@ -5,22 +5,28 @@
 2. [JavaScript Version](#javascript-version)
    - [Props](#javascript-props)
    - [Usage Example](#javascript-usage-example)
+   - [CSS Animation Styles](#css-animation-styles)
 3. [TypeScript Version](#typescript-version)
    - [Type Definitions](#typescript-type-definitions)
    - [Usage Example](#typescript-usage-example)
-4. [Notes](#notes)
+   - [CSS Animation Styles](#typescript-css-animation-styles)
+4. [Framer Motion Version](#framer-motion-version)
+   - [Framer Motion Props](#framer-motion-props)
+   - [Framer Motion Usage Example](#framer-motion-usage-example)
+5. [Notes](#notes)
 
 ---
 
 ## Overview
-The `DynamicButton` component is a highly customizable and reusable button built using React. It leverages `framer-motion` for animations and allows developers to pass dynamic properties for text, icons, styles, animations, and event handling. 
+The `DynamicButton` component is a customizable button that supports dynamic properties for text, icons, styles, animations, and event handling. This component is available in two implementations: one using standard Tailwind CSS animations and the other using `framer-motion` for advanced animations.
 
 ---
 
 ## JavaScript Version
 
+### Implementation
+
 ```jsx
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const DynamicButton = ({
@@ -31,26 +37,24 @@ const DynamicButton = ({
   hoverStyles = 'hover:bg-secondary-900',
   textSize = 'text-xl',
   iconSize = 'text-2xl',
-  whileHover = { scale: 1.1, boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' },
-  whileTap = { scale: 0.95 },
-  transition = { duration: 0.3 },
   onClick,
   disabled = false,
 }) => {
   return (
-    <motion.button
-      whileHover={!disabled && whileHover}
-      whileTap={!disabled && whileTap}
-      transition={transition}
+    <button
       className={`flex items-center gap-3 ${buttonStyles} ${hoverStyles} shadow-lg ${disabled && 'opacity-50 cursor-not-allowed'}`}
       onClick={onClick}
       disabled={disabled}
+      onMouseEnter={e => e.currentTarget.classList.add('scale-105')}
+      onMouseLeave={e => e.currentTarget.classList.remove('scale-105')}
+      onMouseDown={e => e.currentTarget.classList.add('scale-95')}
+      onMouseUp={e => e.currentTarget.classList.remove('scale-95')}
     >
       {Icon && <Icon className={iconSize} />}
       <Link to={link} className={textSize}>
         {text}
       </Link>
-    </motion.button>
+    </button>
   );
 };
 
@@ -68,13 +72,10 @@ export default DynamicButton;
 | `hoverStyles`| `String`           | `'hover:bg-secondary-900'`      | Additional hover styles.                                   |
 | `textSize`  | `String`            | `'text-xl'`                      | Size of the text in the button.                            |
 | `iconSize`  | `String`            | `'text-2xl'`                     | Size of the icon.                                         |
-| `whileHover`| `Object`            | `{ scale: 1.1, boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' }` | Animation for the button when hovered.                     |
-| `whileTap`  | `Object`            | `{ scale: 0.95 }`                | Animation for the button when tapped.                      |
-| `transition` | `Object`           | `{ duration: 0.3 }`              | Transition time for hover/tap animations.                  |
 | `onClick`   | `Function`          | `undefined`                      | Event handler for the button's click event.               |
 | `disabled`  | `Boolean`           | `false`                          | Disables the button and changes its appearance.            |
 
-### JavaScript Usage Example
+### Usage Example
 
 ```jsx
 import { FaShoppingCart } from 'react-icons/fa';
@@ -93,9 +94,6 @@ const SomeComponent = () => {
       hoverStyles="hover:bg-secondary-900"
       textSize="text-xl"
       iconSize="text-2xl"
-      whileHover={{ scale: 1.1, boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' }}
-      whileTap={{ scale: 0.95 }}
-      transition={{ duration: 0.3 }}
       onClick={handleClick}
       disabled={false}
     />
@@ -103,12 +101,22 @@ const SomeComponent = () => {
 };
 ```
 
+### CSS Animation Styles
+
+In the above implementation, the button applies the following animations using standard Tailwind CSS classes:
+
+- **Hover Scale**: Button scales up when hovered.
+- **Click Scale**: Button scales down when clicked.
+
+These animations are handled using the `onMouseEnter`, `onMouseLeave`, `onMouseDown`, and `onMouseUp` event handlers.
+
 ---
 
 ## TypeScript Version
 
+### Implementation
+
 ```tsx
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FC } from 'react'; // Importing necessary types from React
 
@@ -121,9 +129,6 @@ interface DynamicButtonProps {
   hoverStyles?: string;
   textSize?: string;
   iconSize?: string;
-  whileHover?: object;
-  whileTap?: object;
-  transition?: object;
   onClick?: () => void; // Click event handler function
   disabled?: boolean;
 }
@@ -137,6 +142,97 @@ const DynamicButton: FC<DynamicButtonProps> = ({
   hoverStyles = 'hover:bg-secondary-900',
   textSize = 'text-xl',
   iconSize = 'text-2xl',
+  onClick,
+  disabled = false,
+}) => {
+  return (
+    <button
+      className={`flex items-center gap-3 ${buttonStyles} ${hoverStyles} shadow-lg ${disabled && 'opacity-50 cursor-not-allowed'}`}
+      onClick={onClick}
+      disabled={disabled}
+      onMouseEnter={e => e.currentTarget.classList.add('scale-105')}
+      onMouseLeave={e => e.currentTarget.classList.remove('scale-105')}
+      onMouseDown={e => e.currentTarget.classList.add('scale-95')}
+      onMouseUp={e => e.currentTarget.classList.remove('scale-95')}
+    >
+      {Icon && <Icon className={iconSize} />}
+      <Link to={link} className={textSize}>
+        {text}
+      </Link>
+    </button>
+  );
+};
+
+export default DynamicButton;
+```
+
+### TypeScript Type Definitions
+
+| Prop         | Type                | Default Value                     | Description                                                 |
+|--------------|---------------------|-----------------------------------|-------------------------------------------------------------|
+| `text`      | `string`            | `'Click Me'`                     | The label for the button.                                   |
+| `icon`      | `React component`    | `undefined`                      | A dynamic icon component passed to display within the button. |
+| `link`      | `string`            | `'#'`                            | The URL path for the button link.                           |
+| `buttonStyles`| `string`          | `'px-10 py-5 bg-secondary-800 text-white rounded-full'` | Styles for the button.                                    |
+| `hoverStyles`| `string`           | `'hover:bg-secondary-900'`      | Additional hover styles.                                   |
+| `textSize`  | `string`            | `'text-xl'`                      | Size of the text in the button.                            |
+| `iconSize`  | `string`            | `'text-2xl'`                     | Size of the icon.                                         |
+| `onClick`   | `function`          | `undefined`                      | Event handler for the button's click event.               |
+| `disabled`  | `boolean`           | `false`                          | Disables the button and changes its appearance.            |
+
+### Usage Example
+
+```tsx
+import { FaShoppingCart } from 'react-icons/fa';
+import { FC } from 'react';
+
+const SomeComponent: FC = () => {
+  const handleClick = () => {
+    console.log('Button clicked!');
+  };
+
+  return (
+    <DynamicButton
+      text="BUY NOW"
+      icon={FaShoppingCart}
+      link="/purchase"
+      buttonStyles="px-10 py-5 bg-secondary-800 text-white rounded-full"
+      hoverStyles="hover:bg-secondary-900"
+      textSize="text-xl"
+      iconSize="text-2xl"
+      onClick={handleClick}
+      disabled={false}
+    />
+  );
+};
+```
+
+### TypeScript CSS Animation Styles
+
+The CSS animation styles in the TypeScript version are identical to those in the JavaScript version, utilizing Tailwind CSS for hover and click effects.
+
+---
+
+## Framer Motion Version
+
+### Implementation
+
+If you want to implement the button using `framer-motion` for advanced animations, here’s how you can do it.
+
+```jsx
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+
+const DynamicButtonMotion = ({
+  text = 'Click Me',
+  icon: Icon,
+  link = '#',
+  buttonStyles = 'px-10 py-5 bg-secondary-800 text-white rounded-full',
+  hoverStyles = 'hover:bg-secondary-900',
+  textSize = 'text-xl',
+  iconSize = 'text-2
+
+xl',
   whileHover = { scale: 1.1, boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' },
   whileTap = { scale: 0.95 },
   transition = { duration: 0.3 },
@@ -160,51 +256,45 @@ const DynamicButton: FC<DynamicButtonProps> = ({
   );
 };
 
-export default DynamicButton;
+export default DynamicButtonMotion;
 ```
 
-### TypeScript Type Definitions
+### Framer Motion Props
 
 | Prop         | Type                | Default Value                     | Description                                                 |
 |--------------|---------------------|-----------------------------------|-------------------------------------------------------------|
-| `text`      | `string`            | `'Click Me'`                     | The label for the button.                                   |
+| `text`      | `String`            | `'Click Me'`                     | The label for the button.                                   |
 | `icon`      | `React component`    | `undefined`                      | A dynamic icon component passed to display within the button. |
-| `link`      | `string`            | `'#'`                            | The URL path for the button link.                           |
-| `buttonStyles`| `string`          | `'px-10 py-5 bg-secondary-800 text-white rounded-full'` | Styles for the button.                                    |
-| `hoverStyles`| `string`           | `'hover:bg-secondary-900'`      | Additional hover styles.                                   |
-| `textSize`  | `string`            | `'text-xl'`                      | Size of the text in the button.                            |
-| `iconSize`  | `string`            | `'text-2xl'`                     | Size of the icon.                                         |
-| `whileHover`| `object`            | `{ scale: 1.1, boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' }` | Animation for the button when hovered.                     |
-| `whileTap`  | `object`            | `{ scale: 0.95 }`                | Animation for the button when tapped.                      |
-| `transition` | `object`           | `{ duration: 0.3 }`              | Transition time for hover/tap animations.                  |
-| `onClick`   | `function`          | `undefined`                      | Event handler for the button's click event.               |
-| `disabled`  | `boolean`           | `false`                          | Disables the button and changes its appearance.            |
+| `link`      | `String`            | `'#'`                            | The URL path for the button link.                           |
+| `buttonStyles`| `String`          | `'px-10 py-5 bg-secondary-800 text-white rounded-full'` | Styles for the button.                                    |
+| `hoverStyles`| `String`           | `'hover:bg-secondary-900'`      | Additional hover styles.                                   |
+| `textSize`  | `String`            | `'text-xl'`                      | Size of the text in the button.                            |
+| `iconSize`  | `String`            | `'text-2xl'`                     | Size of the icon.                                         |
+| `whileHover`| `Object`            | `{ scale: 1.1 }`                 | Animation properties when hovered.                          |
+| `whileTap`  | `Object`            | `{ scale: 0.95 }`                | Animation properties when clicked.                          |
+| `transition` | `Object`           | `{ duration: 0.3 }`              | Transition properties for animations.                       |
+| `onClick`   | `Function`          | `undefined`                      | Event handler for the button's click event.               |
+| `disabled`  | `Boolean`           | `false`                          | Disables the button and changes its appearance.            |
 
-### TypeScript Usage Example
+### Framer Motion Usage Example
 
-```tsx
+```jsx
 import { FaShoppingCart } from 'react-icons/fa';
-import { FC } from 'react';
 
-const SomeComponent: FC = () => {
+const SomeComponent = () => {
   const handleClick = () => {
     console.log('Button clicked!');
   };
 
   return (
-    <DynamicButton
+    <DynamicButtonMotion
       text="BUY NOW"
       icon={FaShoppingCart}
       link="/purchase"
       buttonStyles="px-10 py-5 bg-secondary-800 text-white rounded-full"
       hoverStyles="hover:bg-secondary-900"
       textSize="text-xl"
-
-
       iconSize="text-2xl"
-      whileHover={{ scale: 1.1, boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' }}
-      whileTap={{ scale: 0.95 }}
-      transition={{ duration: 0.3 }}
       onClick={handleClick}
       disabled={false}
     />
@@ -215,5 +305,6 @@ const SomeComponent: FC = () => {
 ---
 
 ## Notes
-- Ensure you have `framer-motion` and `react-router-dom` installed in your project to utilize this component effectively.
-- The component is designed for high flexibility, allowing customization for various use cases in your application.
+- Ensure you have `react-router-dom` installed in your project to utilize the Link component.
+- The `DynamicButton` can be easily customized for various use cases in your application.
+- The Framer Motion version requires `framer-motion` to be installed in your project.
