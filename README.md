@@ -2,23 +2,35 @@
 
 ## Table of Contents
 1. [Overview](#overview)
-2. [JavaScript Version](#javascript-version)
+2. [Features](#features)
+3. [JavaScript Version](#javascript-version)
    - [Props](#javascript-props)
    - [Usage Example](#javascript-usage-example)
    - [CSS Animation Styles](#css-animation-styles)
-3. [TypeScript Version](#typescript-version)
+4. [TypeScript Version](#typescript-version)
    - [Type Definitions](#typescript-type-definitions)
    - [Usage Example](#typescript-usage-example)
    - [CSS Animation Styles](#typescript-css-animation-styles)
-4. [Framer Motion Version](#framer-motion-version)
+5. [Framer Motion Version](#framer-motion-version)
    - [Framer Motion Props](#framer-motion-props)
    - [Framer Motion Usage Example](#framer-motion-usage-example)
-5. [Notes](#notes)
+6. [Notes](#notes)
 
 ---
 
 ## Overview
-The `DynamicButton` component is a customizable button that supports dynamic properties for text, icons, styles, animations, and event handling. This component is available in two implementations: one using standard Tailwind CSS animations and the other using `framer-motion` for advanced animations.
+The `DynamicButton` component is a customizable button designed to accommodate various use cases with dynamic properties for text, icons, styles, animations, and event handling. It supports three implementations: standard JavaScript, TypeScript, and advanced animations with `framer-motion`.
+
+---
+
+## Features
+- **Dynamic Text**: Customize the button label with any string.
+- **Icon Support**: Include any React component as an icon.
+- **Icon Positioning**: Choose icon positioning as left, right, or hidden.
+- **Customizable Styles**: Tailwind CSS-based styling for buttons, including hover effects.
+- **Accessibility**: Supports `disabled` state for improved usability.
+- **Animation Effects**: Utilizes CSS animations and Framer Motion for hover and click interactions.
+- **Routing Support**: Built-in support for navigation using React Router's `Link`.
 
 ---
 
@@ -37,6 +49,7 @@ const DynamicButton = ({
   hoverStyles = 'hover:bg-secondary-900',
   textSize = 'text-xl',
   iconSize = 'text-2xl',
+  iconPosition = 'left', // 'left', 'right', or 'hidden'
   onClick,
   disabled = false,
 }) => {
@@ -50,10 +63,11 @@ const DynamicButton = ({
       onMouseDown={e => e.currentTarget.classList.add('scale-95')}
       onMouseUp={e => e.currentTarget.classList.remove('scale-95')}
     >
-      {Icon && <Icon className={iconSize} />}
+      {iconPosition === 'left' && Icon && <Icon className={iconSize} />}
       <Link to={link} className={textSize}>
         {text}
       </Link>
+      {iconPosition === 'right' && Icon && <Icon className={iconSize} />}
     </button>
   );
 };
@@ -72,6 +86,7 @@ export default DynamicButton;
 | `hoverStyles`| `String`           | `'hover:bg-secondary-900'`      | Additional hover styles.                                   |
 | `textSize`  | `String`            | `'text-xl'`                      | Size of the text in the button.                            |
 | `iconSize`  | `String`            | `'text-2xl'`                     | Size of the icon.                                         |
+| `iconPosition` | `String`        | `'left'`                         | Position of the icon: `'left'`, `'right'`, or `'hidden'`. |
 | `onClick`   | `Function`          | `undefined`                      | Event handler for the button's click event.               |
 | `disabled`  | `Boolean`           | `false`                          | Disables the button and changes its appearance.            |
 
@@ -94,6 +109,7 @@ const SomeComponent = () => {
       hoverStyles="hover:bg-secondary-900"
       textSize="text-xl"
       iconSize="text-2xl"
+      iconPosition="left" // or "right" or "hidden"
       onClick={handleClick}
       disabled={false}
     />
@@ -118,9 +134,8 @@ These animations are handled using the `onMouseEnter`, `onMouseLeave`, `onMouseD
 
 ```tsx
 import { Link } from 'react-router-dom';
-import { FC } from 'react'; // Importing necessary types from React
+import { FC } from 'react';
 
-// Define the type for props
 interface DynamicButtonProps {
   text?: string;
   icon?: FC<{ className?: string }>; // Icon components like FaShoppingCart
@@ -129,11 +144,11 @@ interface DynamicButtonProps {
   hoverStyles?: string;
   textSize?: string;
   iconSize?: string;
+  iconPosition?: 'left' | 'right' | 'hidden'; // New prop for icon position
   onClick?: () => void; // Click event handler function
   disabled?: boolean;
 }
 
-// TypeScript version of the DynamicButton component
 const DynamicButton: FC<DynamicButtonProps> = ({
   text = 'Click Me',
   icon: Icon,
@@ -142,6 +157,7 @@ const DynamicButton: FC<DynamicButtonProps> = ({
   hoverStyles = 'hover:bg-secondary-900',
   textSize = 'text-xl',
   iconSize = 'text-2xl',
+  iconPosition = 'left', // Default icon position
   onClick,
   disabled = false,
 }) => {
@@ -155,10 +171,11 @@ const DynamicButton: FC<DynamicButtonProps> = ({
       onMouseDown={e => e.currentTarget.classList.add('scale-95')}
       onMouseUp={e => e.currentTarget.classList.remove('scale-95')}
     >
-      {Icon && <Icon className={iconSize} />}
+      {iconPosition === 'left' && Icon && <Icon className={iconSize} />}
       <Link to={link} className={textSize}>
         {text}
       </Link>
+      {iconPosition === 'right' && Icon && <Icon className={iconSize} />}
     </button>
   );
 };
@@ -177,6 +194,7 @@ export default DynamicButton;
 | `hoverStyles`| `string`           | `'hover:bg-secondary-900'`      | Additional hover styles.                                   |
 | `textSize`  | `string`            | `'text-xl'`                      | Size of the text in the button.                            |
 | `iconSize`  | `string`            | `'text-2xl'`                     | Size of the icon.                                         |
+| `iconPosition` | `string`        | `'left'`                         | Position of the icon: `'left'`, `'right'`, or `'hidden'`. |
 | `onClick`   | `function`          | `undefined`                      | Event handler for the button's click event.               |
 | `disabled`  | `boolean`           | `false`                          | Disables the button and changes its appearance.            |
 
@@ -186,7 +204,9 @@ export default DynamicButton;
 import { FaShoppingCart } from 'react-icons/fa';
 import { FC } from 'react';
 
-const SomeComponent: FC = () => {
+const Some
+
+Component: FC = () => {
   const handleClick = () => {
     console.log('Button clicked!');
   };
@@ -200,6 +220,7 @@ const SomeComponent: FC = () => {
       hoverStyles="hover:bg-secondary-900"
       textSize="text-xl"
       iconSize="text-2xl"
+      iconPosition="right" // or "left" or "hidden"
       onClick={handleClick}
       disabled={false}
     />
@@ -207,9 +228,14 @@ const SomeComponent: FC = () => {
 };
 ```
 
-### TypeScript CSS Animation Styles
+### CSS Animation Styles
 
-The CSS animation styles in the TypeScript version are identical to those in the JavaScript version, utilizing Tailwind CSS for hover and click effects.
+The button uses standard CSS for animations, including:
+
+- **Hover Scale**: Increases size slightly on hover.
+- **Click Scale**: Reduces size slightly on click.
+
+These effects create a responsive and engaging user interface.
 
 ---
 
@@ -217,46 +243,40 @@ The CSS animation styles in the TypeScript version are identical to those in the
 
 ### Implementation
 
-If you want to implement the button using `framer-motion` for advanced animations, here’s how you can do it.
-
 ```jsx
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-const DynamicButtonMotion = ({
+const DynamicButton = ({
   text = 'Click Me',
   icon: Icon,
   link = '#',
   buttonStyles = 'px-10 py-5 bg-secondary-800 text-white rounded-full',
   hoverStyles = 'hover:bg-secondary-900',
   textSize = 'text-xl',
-  iconSize = 'text-2
-
-xl',
-  whileHover = { scale: 1.1, boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' },
-  whileTap = { scale: 0.95 },
-  transition = { duration: 0.3 },
+  iconSize = 'text-2xl',
+  iconPosition = 'left', // New prop for icon position
   onClick,
   disabled = false,
 }) => {
   return (
     <motion.button
-      whileHover={!disabled && whileHover}
-      whileTap={!disabled && whileTap}
-      transition={transition}
       className={`flex items-center gap-3 ${buttonStyles} ${hoverStyles} shadow-lg ${disabled && 'opacity-50 cursor-not-allowed'}`}
       onClick={onClick}
       disabled={disabled}
+      whileHover={{ scale: 1.05 }} // Scale up on hover
+      whileTap={{ scale: 0.95 }}   // Scale down on tap
     >
-      {Icon && <Icon className={iconSize} />}
+      {iconPosition === 'left' && Icon && <Icon className={iconSize} />}
       <Link to={link} className={textSize}>
         {text}
       </Link>
+      {iconPosition === 'right' && Icon && <Icon className={iconSize} />}
     </motion.button>
   );
 };
 
-export default DynamicButtonMotion;
+export default DynamicButton;
 ```
 
 ### Framer Motion Props
@@ -270,9 +290,7 @@ export default DynamicButtonMotion;
 | `hoverStyles`| `String`           | `'hover:bg-secondary-900'`      | Additional hover styles.                                   |
 | `textSize`  | `String`            | `'text-xl'`                      | Size of the text in the button.                            |
 | `iconSize`  | `String`            | `'text-2xl'`                     | Size of the icon.                                         |
-| `whileHover`| `Object`            | `{ scale: 1.1 }`                 | Animation properties when hovered.                          |
-| `whileTap`  | `Object`            | `{ scale: 0.95 }`                | Animation properties when clicked.                          |
-| `transition` | `Object`           | `{ duration: 0.3 }`              | Transition properties for animations.                       |
+| `iconPosition` | `String`        | `'left'`                         | Position of the icon: `'left'`, `'right'`, or `'hidden'`. |
 | `onClick`   | `Function`          | `undefined`                      | Event handler for the button's click event.               |
 | `disabled`  | `Boolean`           | `false`                          | Disables the button and changes its appearance.            |
 
@@ -287,7 +305,7 @@ const SomeComponent = () => {
   };
 
   return (
-    <DynamicButtonMotion
+    <DynamicButton
       text="BUY NOW"
       icon={FaShoppingCart}
       link="/purchase"
@@ -295,6 +313,7 @@ const SomeComponent = () => {
       hoverStyles="hover:bg-secondary-900"
       textSize="text-xl"
       iconSize="text-2xl"
+      iconPosition="right" // or "left" or "hidden"
       onClick={handleClick}
       disabled={false}
     />
@@ -302,9 +321,13 @@ const SomeComponent = () => {
 };
 ```
 
+### Framer Motion CSS Animation Styles
+
+In this implementation, the button utilizes `framer-motion` for hover and click effects, creating a more engaging user experience.
+
 ---
 
 ## Notes
-- Ensure you have `react-router-dom` installed in your project to utilize the Link component.
-- The `DynamicButton` can be easily customized for various use cases in your application.
-- The Framer Motion version requires `framer-motion` to be installed in your project.
+- Ensure to install the necessary packages for icons and Framer Motion, if using those features.
+- Tailwind CSS must be set up in your project for the styles to apply correctly.
+- For icons, consider using popular libraries like `react-icons`.
