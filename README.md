@@ -1,53 +1,119 @@
 ### DynamicButton Component Documentation
 
-The `DynamicButton` component is a flexible, reusable, and professional button component for Next.js and TypeScript applications. It can be used as both a button and a link, with support for icons, loading states, disabled states, and customization options for design and behavior.
+The `DynamicButton` component is a highly flexible, reusable, and modern button component for Next.js and TypeScript applications. It supports buttons, links, icons, loading states, disabled states, and extensive customization through Tailwind CSS classes.
 
 ---
 
 ### Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Basic Button](#basic-button)
-  - [Button with Icon](#button-with-icon)
-  - [Link Button](#link-button)
-  - [Loading Button](#loading-button)
-  - [Disabled Button](#disabled-button)
-  - [Custom Styles](#custom-styles)
-- [Props](#props)
-- [Examples](#examples)
-  - [Icon on Right](#icon-on-right)
-  - [Custom Button Styles](#custom-button-styles)
-- [Accessibility](#accessibility)
-- [Conclusion](#conclusion)
+1. [Installation](#installation)
+2. [Component Code](#component-code)
+3. [Usage](#usage)
+   - [Basic Button](#basic-button)
+   - [Button with Icon](#button-with-icon)
+   - [Link Button](#link-button)
+   - [Loading Button](#loading-button)
+   - [Disabled Button](#disabled-button)
+   - [Custom Styles](#custom-styles)
+4. [Props](#props)
+5. [Examples](#examples)
+6. [Accessibility](#accessibility)
+7. [Conclusion](#conclusion)
 
 ---
 
 ### Installation
 
-Ensure you have `react-icons` installed for handling the optional icons:
+First, ensure you have `react-icons` (if using icons) installed in your project:
 
 ```bash
 npm install react-icons
 ```
 
-You can install the `DynamicButton` component directly into your project as part of your component library.
+### Component Code
+
+Here's the complete code for the `DynamicButton` component:
+
+```tsx
+import { FC } from 'react';
+import Link from 'next/link';
+import { IconType } from 'react-icons';
+
+interface DynamicButtonProps {
+  text?: string;
+  icon?: IconType;
+  link?: string;
+  buttonStyles?: string;
+  hoverStyles?: string;
+  textSize?: string;
+  iconSize?: string;
+  iconPosition?: 'left' | 'right' | 'hidden';
+  loading?: boolean;
+  onClick?: () => void;
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+}
+
+const DynamicButton: FC<DynamicButtonProps> = ({
+  text = 'Click Me',
+  icon: Icon,
+  link = '',
+  buttonStyles = 'px-6 py-3 bg-blue-500 text-white rounded-full transition-all duration-300 ease-in-out',
+  hoverStyles = 'hover:bg-blue-600',
+  textSize = 'text-base md:text-lg',
+  iconSize = 'text-lg sm:text-xl',
+  iconPosition = 'left',
+  loading = false,
+  onClick,
+  disabled = false,
+  type = 'button',
+}) => {
+  const content = (
+    <>
+      {loading && <span className="loader mr-2"></span>}
+      {!loading && iconPosition === 'left' && Icon && <Icon className={`${iconSize} mr-2`} />}
+      <span className={textSize}>{text}</span>
+      {!loading && iconPosition === 'right' && Icon && <Icon className={`${iconSize} ml-2`} />}
+    </>
+  );
+
+  const commonClasses = `flex items-center justify-center gap-2 ${buttonStyles} ${hoverStyles} ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`;
+
+  return link ? (
+    <Link href={link}>
+      <a className={commonClasses} aria-disabled={disabled}>
+        {content}
+      </a>
+    </Link>
+  ) : (
+    <button
+      type={type}
+      className={commonClasses}
+      onClick={disabled || loading ? undefined : onClick}
+      disabled={disabled}
+      aria-busy={loading}
+    >
+      {content}
+    </button>
+  );
+};
+
+export default DynamicButton;
+```
 
 ### Usage
 
 #### Basic Button
 
-This is a simple button with default styles and behavior:
+This is the simplest form of the button with default text and style:
 
 ```tsx
-import DynamicButton from './DynamicButton';
-
-<DynamicButton text="Click Me" onClick={() => console.log('Button clicked!')} />;
+<DynamicButton text="Click Me" onClick={() => alert('Button Clicked')} />
 ```
 
 #### Button with Icon
 
-You can add an icon using the `icon` prop. Icons are passed as React components from libraries like `react-icons`:
+You can pass an icon component from `react-icons` as a prop:
 
 ```tsx
 import { FaCartPlus } from 'react-icons/fa';
@@ -56,125 +122,112 @@ import { FaCartPlus } from 'react-icons/fa';
   text="Add to Cart"
   icon={FaCartPlus}
   onClick={() => console.log('Added to cart')}
-/>;
+/>
 ```
 
 #### Link Button
 
-If you need the button to act as a link, simply pass the `link` prop:
+The button can also be a link by providing the `link` prop:
 
 ```tsx
-<DynamicButton text="Go to Shop" link="/shop" />;
+<DynamicButton
+  text="Go to Shop"
+  link="/shop"
+/>
 ```
 
 #### Loading Button
 
-You can display a spinner when the button is in a loading state:
+You can display a loading spinner while the button is in a loading state:
 
 ```tsx
 <DynamicButton
   text="Processing..."
   loading={true}
-  onClick={() => console.log('Processing')}
-/>;
+/>
 ```
 
 #### Disabled Button
 
-Use the `disabled` prop to disable the button:
+A disabled button prevents user interaction:
 
 ```tsx
 <DynamicButton
   text="Disabled Button"
   disabled={true}
-  onClick={() => console.log('This will not fire')}
-/>;
+/>
 ```
 
 #### Custom Styles
 
-You can fully customize the button using the `buttonStyles` and `hoverStyles` props:
+You can customize the button's appearance with your own styles:
 
 ```tsx
 <DynamicButton
   text="Custom Button"
-  buttonStyles="bg-purple-600 text-white"
-  hoverStyles="hover:bg-purple-800"
-/>;
+  buttonStyles="bg-green-500 text-white rounded-lg px-4 py-2"
+  hoverStyles="hover:bg-green-600"
+/>
 ```
-
----
 
 ### Props
 
-| **Prop**           | **Type**                                  | **Default**                                                                                           | **Description**                                                                                                                                                                                                 |
-|--------------------|-------------------------------------------|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `text`             | `string`                                  | `'Click Me'`                                                                                           | Text to display inside the button.                                                                                                                                                                               |
-| `icon`             | `FC<{ className?: string }>`              | `undefined`                                                                                           | Optional icon component (e.g., from `react-icons`).                                                                                                                                                             |
-| `link`             | `string`                                  | `''`                                                                                                  | If provided, the button will render as a Next.js `<Link />`.                                                                                                                                                    |
-| `buttonStyles`     | `string`                                  | `'px-6 py-3 bg-primary text-white rounded-full transition-all duration-300 ease-in-out'`               | Tailwind CSS classes for button styles.                                                                                                                                                                          |
-| `hoverStyles`      | `string`                                  | `'hover:bg-primary-dark'`                                                                              | Tailwind CSS classes for hover effect styles.                                                                                                                                                                    |
-| `textSize`         | `string`                                  | `'text-base md:text-lg'`                                                                               | Font size classes for button text.                                                                                                                                                                               |
-| `iconSize`         | `string`                                  | `'text-lg sm:text-xl'`                                                                                 | Tailwind CSS classes for icon size.                                                                                                                                                                              |
-| `iconPosition`     | `'left' | 'right' | 'hidden'`              | `'left'`                                                                                               | Controls whether the icon is displayed on the left, right, or hidden entirely.                                                                                                                                   |
-| `onClick`          | `() => void`                              | `undefined`                                                                                           | Click handler for the button (not applicable when `link` is provided).                                                                                                                                           |
-| `loading`          | `boolean`                                 | `false`                                                                                               | If `true`, shows a loading spinner and disables the button.                                                                                                                                                     |
-| `disabled`         | `boolean`                                 | `false`                                                                                               | If `true`, disables the button (applying opacity and disabling hover/click interactions).                                                                                                                        |
-| `type`             | `'button' | 'submit' | 'reset'`            | `'button'`                                                                                             | Specifies the button type (useful for form submissions).                                                                                                                                                        |
-
----
+| **Prop**           | **Type**                        | **Default**                                             | **Description**                                                                                                      |
+|--------------------|---------------------------------|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `text`             | `string`                        | `'Click Me'`                                             | Text to display inside the button.                                                                                   |
+| `icon`             | `IconType`                      | `undefined`                                             | Optional icon component (e.g., from `react-icons`).                                                                  |
+| `link`             | `string`                        | `''`                                                    | If provided, the button will render as a Next.js `<Link />` instead of a button.                                      |
+| `buttonStyles`     | `string`                        | `'px-6 py-3 bg-blue-500 text-white rounded-full'`        | Tailwind CSS classes for the button's base styles.                                                                   |
+| `hoverStyles`      | `string`                        | `'hover:bg-blue-600'`                                   | Tailwind CSS classes for hover effect.                                                                                |
+| `textSize`         | `string`                        | `'text-base md:text-lg'`                                | Font size classes for button text.                                                                                   |
+| `iconSize`         | `string`                        | `'text-lg sm:text-xl'`                                  | Tailwind CSS classes for the icon size.                                                                               |
+| `iconPosition`     | `'left' | 'right' | 'hidden'`   | `'left'`                                                | Position of the icon: left, right, or hidden.                                                                        |
+| `loading`          | `boolean`                       | `false`                                                 | Displays a loading spinner if true.                                                                                  |
+| `onClick`          | `() => void`                    | `undefined`                                             | Function to handle the button's click event.                                                                          |
+| `disabled`         | `boolean`                       | `false`                                                 | Disables the button if true (applies opacity and prevents interaction).                                               |
+| `type`             | `'button' | 'submit' | 'reset'` | `'button'`                                              | Sets the button type (useful for forms).                                                                              |
 
 ### Examples
 
-#### Icon on Right
+#### Button with Icon on Right
 
-By default, icons are placed on the left. You can move them to the right:
+To position the icon on the right side:
 
 ```tsx
+import { FaShoppingCart } from 'react-icons/fa';
+
 <DynamicButton
   text="Checkout"
   icon={FaShoppingCart}
   iconPosition="right"
-  onClick={() => console.log('Checkout clicked')}
-/>;
+  onClick={() => alert('Checkout clicked')}
+/>
 ```
 
-#### Custom Button Styles
+#### Custom Button with Icon and Link
 
-You can fully control the button's appearance using custom Tailwind CSS classes:
+A fully styled button with a custom icon and link:
 
 ```tsx
+import { FaArrowRight } from 'react-icons/fa';
+
 <DynamicButton
-  text="Subscribe"
-  buttonStyles="px-8 py-3 bg-blue-500 text-white rounded-lg"
-  hoverStyles="hover:bg-blue-600"
-/>;
+  text="Proceed"
+  icon={FaArrowRight}
+  link="/next-step"
+  buttonStyles="bg-red-500 text-white px-8 py-3 rounded-lg"
+  hoverStyles="hover:bg-red-700"
+/>
 ```
-
-#### Loading and Disabled States
-
-Combining loading and disabled states ensures proper button behavior:
-
-```tsx
-<DynamicButton
-  text="Submit"
-  loading={true}
-  disabled={true}
-/>;
-```
-
----
 
 ### Accessibility
 
-The `DynamicButton` component has several accessibility features built in:
+The `DynamicButton` component includes accessibility features:
 
-- **Keyboard Interactivity**: Buttons are focusable and respond to keyboard events.
-- **Aria Attributes**: The button uses `aria-disabled` to indicate when it’s disabled and `aria-busy` during loading states.
-- **Accessible Links**: When using the `link` prop, the button will be rendered as an accessible `<a>` element.
-
----
+- **Keyboard Interaction**: The button is focusable and responds to keyboard inputs.
+- **ARIA Attributes**: It uses `aria-disabled` when the button is disabled, and `aria-busy` when loading.
+- **Semantic HTML**: The button is rendered as either a `<button>` or an anchor `<a>` tag when used as a link.
 
 ### Conclusion
 
-The `DynamicButton` component is designed to be flexible, reusable, and easy to integrate into any Next.js or React project. With its support for loading states, icons, custom styling, and accessibility, it offers a professional and scalable solution for creating buttons and links.
+The `DynamicButton` component provides a modern, reusable solution for creating buttons and links in Next.js applications. With its flexibility, support for icons, loading states, and custom styles, it's a versatile choice for building dynamic user interfaces.
